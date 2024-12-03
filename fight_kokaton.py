@@ -198,8 +198,8 @@ def main():
                 if beam:
                     # 対消滅
                     if beam.rct.colliderect(bomb.rct):
-                        beam = None
                         bombs[i] = None
+                        multibeam[j] = None
                         bird.change_img(6, screen)
                         score.score += 1  # 爆弾にビームを当てたらスコア+1
                         pg.display.update()
