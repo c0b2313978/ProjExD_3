@@ -184,8 +184,7 @@ def main():
         screen.blit(bg_img, [0, 0])
         
         for i, bomb in enumerate(bombs):
-            for j, beam in enumerate(multibeam):
-                if bird.rct.colliderect(bomb.rct):
+            if bird.rct.colliderect(bomb.rct):
                     # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
                     bird.change_img(8, screen)
                     fonto = pg.font.Font(None, 80)
@@ -194,7 +193,8 @@ def main():
                     pg.display.update()
                     time.sleep(1)
                     return
-
+            
+            for j, beam in enumerate(multibeam):
                 if beam:
                     # 対消滅
                     if beam.rct.colliderect(bomb.rct):
