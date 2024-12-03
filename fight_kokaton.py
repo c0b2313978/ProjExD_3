@@ -162,6 +162,31 @@ class Score:
         screen.blit(self.img, self.rct)
 
 
+class Explosion:
+    """
+    爆弾とビームの対消滅時に発生させる爆発エフェクトに関するクラス
+    """
+    def __init__(self, xy: tuple[int, int]) -> None:
+        """
+        引数 xy: 爆発演出を発生させる中心座標のタプル
+        """
+        self.explosion_imgs = [pg.image.load("fig/explosion.gif"), 
+                               pg.transform.flip(pg.image.load("fig/explosion.gif"), True, True)]
+        self.center = xy
+        self.life = 10
+    
+    def update(self, screen: pg.Surface):
+        """
+        爆発エフェクトを発生させる
+        引数 screen: 画面Surface
+        """
+        if self.life % 2:
+            screen.blit(self.explosion_imgs[0], self.center)
+        else:
+            screen.blit(self.explosion_imgs[1], self.center)
+        self.life -= 1
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -173,6 +198,7 @@ def main():
     beam = None
     score = Score()
     multibeam = []
+    explosion = []
 
     while True:
         for event in pg.event.get():
@@ -198,6 +224,7 @@ def main():
                 if beam:
                     # 対消滅
                     if beam.rct.colliderect(bomb.rct):
+                        explosion.append(Explosion(bomb.rct))
                         bombs[i] = None
                         multibeam[j] = None
                         bird.change_img(6, screen)
@@ -214,6 +241,10 @@ def main():
         bombs = [bomb for bomb in bombs if bomb]  # Noneになったbombを除去
         for bomb in bombs:
             bomb.update(screen)
+        
+        explosion = [hoge for hoge in explosion if hoge.life > 0]
+        for hoge in explosion:
+            hoge.update(screen)
         
         score.update(screen)  # 1.スコア表示
 
