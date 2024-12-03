@@ -147,7 +147,6 @@ def main():
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
     bomb = Bomb((255, 0, 0), 10)
-    # bomb2 = Bomb((0, 0, 255), 10)
     clock = pg.time.Clock()
     tmr = 0
     beam = None
@@ -161,18 +160,24 @@ def main():
                 beam = Beam(bird)            
         screen.blit(bg_img, [0, 0])
         
-        if bird.rct.colliderect(bomb.rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+        if bomb:  # bomb消滅後の対策
+            if bird.rct.colliderect(bomb.rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
+
+        # 対消滅
+        if all((beam, bomb)):  # (if beam: ): 対消滅後にビームを出すと、bombがNoneであり、bomb.rctでエラーが発生する
+            if beam.rct.colliderect(bomb.rct):
+                beam = None
+                bomb = None
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         if beam: beam.update(screen)   
-        bomb.update(screen)
-        # bomb2.update(screen)
+        if bomb: bomb.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
