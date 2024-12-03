@@ -7,6 +7,7 @@ import pygame as pg
 
 WIDTH = 1100  # ゲームウィンドウの幅
 HEIGHT = 650  # ゲームウィンドウの高さ
+NUM_OF_BOMBS = 5
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -146,7 +147,8 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
-    bomb = Bomb((255, 0, 0), 10)
+    # bomb = Bomb((255, 0, 0), 10)]
+    bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     clock = pg.time.Clock()
     tmr = 0
     beam = None
@@ -160,26 +162,31 @@ def main():
                 beam = Beam(bird)            
         screen.blit(bg_img, [0, 0])
         
-        if bomb:  # bomb消滅後の対策
-            if bird.rct.colliderect(bomb.rct):
-                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-                bird.change_img(8, screen)
-                pg.display.update()
-                time.sleep(1)
-                return
+        for i, bomb in enumerate(bombs):
+            if beam:
+                if bird.rct.colliderect(bomb.rct):
+                    # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                    bird.change_img(8, screen)
+                    pg.display.update()
+                    time.sleep(1)
+                    return
 
-        # 対消滅
-        if all((beam, bomb)):  # (if beam: ): 対消滅後にビームを出すと、bombがNoneであり、bomb.rctでエラーが発生する
-            if beam.rct.colliderect(bomb.rct):
-                beam = None
-                bomb = None
-                bird.change_img(6, screen)
-                pg.display.update()
+                # 対消滅
+                if beam.rct.colliderect(bomb.rct):
+                    beam = None
+                    # bomb = None
+                    bombs[i] = None
+                    bird.change_img(6, screen)
+                    pg.display.update()
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         if beam: beam.update(screen)   
-        if bomb: bomb.update(screen)
+
+        bombs = [bomb for bomb in bombs if bomb]  # Noneになったbombを除去
+        for bomb in bombs:
+            bomb.update(screen)
+        
         pg.display.update()
         tmr += 1
         clock.tick(50)
