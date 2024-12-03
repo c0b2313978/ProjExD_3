@@ -232,7 +232,7 @@ def main():
                     if beam.rct.colliderect(bomb.rct):
                         explosion.append(Explosion(bomb.rct))
                         bombs[i] = None
-                        bomb = None 
+                        bomb = None  # 1つの爆弾に複数のビームが当たらないようにする
                         multibeam[j] = None
                         bird.change_img(6, screen)
                         score.score += 1  # 爆弾にビームを当てたらスコア+1
