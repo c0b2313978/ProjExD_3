@@ -180,10 +180,7 @@ class Explosion:
         爆発エフェクトを発生させる
         引数 screen: 画面Surface
         """
-        if self.life % 2:
-            screen.blit(self.explosion_imgs[0], self.center)
-        else:
-            screen.blit(self.explosion_imgs[1], self.center)
+        screen.blit(self.explosion_imgs[self.life % 2], self.center)
         self.life -= 1
 
 
